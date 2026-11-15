@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <title>Countdown</title>
+  <meta name="description" content="Countdowns für deine Events – direkt auf dem Homebildschirm.">
+  <meta name="theme-color" content="#07060f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Countdown">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="bg" aria-hidden="true">
+    <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+    <div class="grain"></div>
+  </div>
+
+  <header class="top">
+    <div>
+      <p class="eyebrow" id="today"></p>
+      <h1>Countdown</h1>
+    </div>
+    <div class="top-actions">
+      <button class="icon-btn" id="btn-settings" aria-label="Einstellungen">
+        <svg viewBox="0 0 24 24"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <section id="hero" class="hero" hidden></section>
+    <section id="list" class="list"></section>
+    <section id="empty" class="empty" hidden>
+      <div class="empty-orb">⏳</div>
+      <h2>Noch keine Countdowns</h2>
+      <p>Tipp unten auf <b>+</b> und leg dein erstes Event an – Urlaub, Geburtstag, Konzert, Prüfung…</p>
+    </section>
+    <div id="install-hint" class="install-hint" hidden>
+      <span>📲</span>
+      <div><b>Als App installieren:</b> In Safari auf <i>Teilen</i> <svg class="inline-ico" viewBox="0 0 24 24"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg> → <i>Zum Home-Bildschirm</i>.</div>
+      <button class="x" id="install-hint-close" aria-label="Schließen">×</button>
+    </div>
+  </main>
+
+  <button class="fab" id="btn-add" aria-label="Neues Event">
+    <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+  </button>
+
+  <!-- Detail -->
+  <div class="detail" id="detail" hidden>
+    <div class="detail-bg" id="detail-bg"></div>
+    <div class="detail-inner">
+      <div class="detail-top">
+        <button class="icon-btn" id="detail-close" aria-label="Zurück">
+          <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <div class="detail-actions">
+          <button class="icon-btn" id="detail-share" aria-label="Teilen">
+            <svg viewBox="0 0 24 24"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>
+          </button>
+          <button class="icon-btn" id="detail-edit" aria-label="Bearbeiten">
+            <svg viewBox="0 0 24 24"><path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4Z"/><path d="M13.5 6.5l4 4"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="detail-body" id="detail-body"></div>
+    </div>
+  </div>
+
+  <!-- Editor sheet -->
+  <div class="sheet-wrap" id="sheet" hidden>
+    <div class="sheet-backdrop" data-close></div>
+    <form class="sheet" id="form" autocomplete="off">
+      <div class="grabber"></div>
+      <div class="sheet-head">
+        <button type="button" class="link" data-close>Abbrechen</button>
+        <h3 id="form-title">Neues Event</h3>
+        <button type="submit" class="link strong">Sichern</button>
+      </div>
+
+      <div class="preview" id="preview">
+        <button type="button" class="emoji-big" id="emoji-btn">🎉</button>
+        <input class="title-input" name="title" id="f-title" placeholder="Name des Events" maxlength="60" required>
+      </div>
+
+      <div class="emoji-row" id="emoji-row"></div>
+
+      <div class="group">
+        <label class="row">
+          <span>Datum</span>
+          <input type="date" name="date" id="f-date" required>
+        </label>
+        <label class="row">
+          <span>Ganztägig</span>
+          <input type="checkbox" class="switch" name="allday" id="f-allday" checked>
+        </label>
+        <label class="row" id="time-row" hidden>
+          <span>Uhrzeit</span>
+          <input type="time" name="time" id="f-time" value="20:00">
+        </label>
+        <label class="row">
+          <span>Jährlich wiederholen</span>
+          <input type="checkbox" class="switch" name="yearly" id="f-yearly">
+        </label>
+      </div>
+
+      <p class="group-label">Farbe</p>
+      <div class="colors" id="colors"></div>
+
+      <p class="group-label">Erinnerungen</p>
+      <div class="chips" id="reminders"></div>
+      <p class="hint" id="notif-hint"></p>
+
+      <div class="group">
+        <label class="row col">
+          <span>Notiz</span>
+          <textarea name="note" id="f-note" rows="2" maxlength="200" placeholder="Optional – z. B. Ort, Tickets, …"></textarea>
+        </label>
+      </div>
+
+      <button type="button" class="danger" id="btn-delete" hidden>Event löschen</button>
+    </form>
+  </div>
+
+  <!-- Settings sheet -->
+  <div class="sheet-wrap" id="settings" hidden>
+    <div class="sheet-backdrop" data-close></div>
+    <div class="sheet">
+      <div class="grabber"></div>
+      <div class="sheet-head">
+        <span></span>
+        <h3>Einstellungen</h3>
+        <button type="button" class="link strong" data-close>Fertig</button>
+      </div>
+
+      <p class="group-label">Benachrichtigungen</p>
+      <div class="group">
+        <div class="row">
+          <span id="notif-status">Status</span>
+          <button type="button" class="pill" id="btn-notif">Aktivieren</button>
+        </div>
+        <div class="row">
+          <span>Test-Benachrichtigung</span>
+          <button type="button" class="pill ghost" id="btn-test">Senden</button>
+        </div>
+      </div>
+      <p class="hint">
+        Web-Apps dürfen auf iPhone/Android nur Benachrichtigungen zeigen, solange sie im Hintergrund noch laufen.
+        Für <b>garantierte</b> Erinnerungen tipp beim Event auf <b>„In Kalender“</b> – dann erinnert dich dein Kalender, auch wenn die App zu ist.
+      </p>
+
+      <p class="group-label">Anzeige</p>
+      <div class="group">
+        <label class="row">
+          <span>Vergangene Events zeigen</span>
+          <input type="checkbox" class="switch" id="s-past">
+        </label>
+        <label class="row">
+          <span>Sekunden anzeigen</span>
+          <input type="checkbox" class="switch" id="s-seconds" checked>
+        </label>
+      </div>
+
+      <p class="group-label">Daten</p>
+      <div class="group">
+        <div class="row">
+          <span>Alle Events in Kalender</span>
+          <button type="button" class="pill ghost" id="btn-ics-all">.ics</button>
+        </div>
+        <div class="row">
+          <span>Backup exportieren</span>
+          <button type="button" class="pill ghost" id="btn-export">Export</button>
+        </div>
+        <div class="row">
+          <span>Backup importieren</span>
+          <label class="pill ghost">Import<input type="file" id="f-import" accept="application/json,.json" hidden></label>
+        </div>
+      </div>
+      <p class="hint">Deine Events werden nur auf diesem Gerät gespeichert.</p>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
